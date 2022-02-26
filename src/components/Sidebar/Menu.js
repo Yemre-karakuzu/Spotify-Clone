@@ -6,7 +6,6 @@ function Menu() {
       <ul className="flex flex-col">
         <li>
           <NavLink
-            activeClassName="bg-active text-white"
             to={"/"}
             exact="true"
             className={({ isActive }) =>
@@ -24,7 +23,6 @@ function Menu() {
         </li>
         <li>
           <NavLink
-            activeClassName="bg-active text-white"
             to={"/search"}
             className={({ isActive }) =>
               isActive
@@ -42,7 +40,6 @@ function Menu() {
         </li>
         <li>
           <NavLink
-            activeClassName="bg-active text-white"
             to={"/collection"}
             className={({ isActive }) =>
               isActive
