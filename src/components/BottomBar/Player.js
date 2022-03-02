@@ -1,11 +1,18 @@
 import { Icon } from "Icons";
-import { useAudio } from "react-use";
-import { secondToTime } from "utils";
-import CustomRange from "../CustomRange";
-import { useMemo, useEffect } from "react";
+import { useAudio, useFullscreen, useToggle } from "react-use";
+import { secondsToTime } from "utils";
+import { useMemo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setControls,setPlaying,setSidebar } from "stores/player";
+import { setControls, setPlaying, setSidebar } from "stores/player";
+import CustomRange from "../CustomRange";
+import FullScreenPlayer from "../FullScreenPlayer";
 function Player() {
+  const fsRef = useRef();
+  const [show, toggle] = useToggle(false);
+  const isFullscreen = useFullscreen(fsRef, show, {
+    onClose: () => toggle(false),
+  });
+
   const dispatch = useDispatch();
   const { current, sidebar } = useSelector((state) => state.player);
   const [audio, state, controls] = useAudio({
@@ -17,9 +24,9 @@ function Player() {
   useEffect(() => {
     controls.play();
   }, [current]);
-  useEffect(()=>{
-    dispatch(setPlaying(state.playing))
-  },[state.playing])
+  useEffect(() => {
+    dispatch(setPlaying(state.playing));
+  }, [state.playing]);
   const volumeIcon = useMemo(() => {
     if (state.volume == 0 || state.muted) return "volumeMuted";
     if (state.volume > 0 && state.volume < 0.33) return "volumeLow";
@@ -36,7 +43,10 @@ function Player() {
               {!sidebar && (
                 <div className="w-14 h-14 mr-3 flex-shrink-0 group relative ">
                   <img src={current.image} alt="" />
-                  <button onClick={()=> dispatch(setSidebar(true))} className="w-6 h-6 bg-black opacity-0 group-hover:opacity-60 hover:!opacity-100 hover:scale-[1.06] rotate-90 rounded-full absolute top-1 right-1 flex items-center justify-center ">
+                  <button
+                    onClick={() => dispatch(setSidebar(true))}
+                    className="w-6 h-6 bg-black opacity-0 group-hover:opacity-60 hover:!opacity-100 hover:scale-[1.06] rotate-90 rounded-full absolute top-1 right-1 flex items-center justify-center "
+                  >
                     <Icon size={16} name="arrowLeft" />
                   </button>
                 </div>
@@ -81,7 +91,7 @@ function Player() {
         <div className="w-full flex items-center mt-1.5 gap-x-2">
           {audio}
           <div className="text-[0.688rem] text-white text-opacity-70">
-            {secondToTime(state?.time)}
+            {secondsToTime(state?.time)}
           </div>
           <CustomRange
             step={0.1}
@@ -91,7 +101,7 @@ function Player() {
             onChange={(value) => controls.seek(value)}
           />
           <div className="text-[0.688rem] text-white text-opacity-70">
-            {secondToTime(state?.duration)}
+            {secondsToTime(state?.duration)}
           </div>
         </div>
       </div>
@@ -123,9 +133,22 @@ function Player() {
             }}
           />
         </div>
-        <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
+        <button
+          onClick={toggle}
+          className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100"
+        >
           <Icon size={16} name="fullScreen" />
         </button>
+      </div>
+      <div ref={fsRef}>
+        {isFullscreen && (
+          <FullScreenPlayer
+            toggle={toggle}
+            state={state}
+            controls={controls}
+            volumeIcon={volumeIcon}
+          />
+        )}
       </div>
     </div>
   );
