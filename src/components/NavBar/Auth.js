@@ -17,6 +17,7 @@ function Auth() {
             <img
               src={user.avatar}
               className={"w-8 h-8 rounded-full p-0.5 mr-2"}
+              alt=""
             />
             <span className="text-sm font-semibold mr-2">{user.name}</span>
             <span className={open && "rotate-180"}>
@@ -25,16 +26,16 @@ function Auth() {
           </Menu.Button>
           <Menu.Items
             className={
-              "absolute p-1 top-full right-0 w-48 bg-active rounded translate-y-2"
+              "absolute z-10 p-1 top-full right-0 w-48 bg-active rounded translate-y-2"
             }
           >
             <Menu.Item>
               {({ active }) => (
                 <a
+                  href="#"
                   className={`h-10 flex justify-between items-center px-2 text-sm rounded ${
                     active && "bg-white bg-opacity-10"
                   }`}
-                  href="#"
                 >
                   Account
                   <Icon size={16} name="external" />
